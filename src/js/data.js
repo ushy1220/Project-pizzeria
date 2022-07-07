@@ -48,10 +48,10 @@ dataSource.products = {
     ],
     params: {
       sauce: {
-        label: 'Sauce',
-        type: 'radios',
-        options: {
-          tomato: {label: 'Tomato', price: 0, default: true},
+        label: 'Sauce',       //Label- nazwa wyświetlana na stronie
+        type: 'radios',     // typ parametru, który decyduje o tym, czy wyświetli się lista checkboxów, radio-buttonów czy select
+        options: {          // zestaw możliwych opcji dla danego parametru
+          tomato: {label: 'Tomato', price: 0, default: true}, // (default- domyślna opcja wliczona w cene produktu)
           cream: {label: 'Sour cream', price: 2},
         },
       },

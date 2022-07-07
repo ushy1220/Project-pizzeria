@@ -61,6 +61,8 @@
 
       thisProduct.renderInMenu();   
 
+      /* klasa Product za pomocą metody renderInMenu bierze dane źródłowe produktu, "wrzuca je" do szablonu, i tak powstaje kod HTML pojedynczego produktu. Ponieważ metoda renderInMenu jest uruchamiana w konstruktorze klasy, to przy tworzeniu każdej nowej instancji dla danego produktu, od razu renderuje się on na stronie. */
+
       console.log('new Product:', thisProduct);
     }
 
@@ -69,30 +71,30 @@
       
       /* generate HTML based on template */
       const generatedHTML = templates.menuProduct(thisProduct.data); 
-// (wywołanie metody templates.menuProduct i przekazanie jej danych produktu)
+      // (wywołanie metody templates.menuProduct i przekazanie jej danych produktu)
 
       /* create element using utils.createElementFromHTML */
       thisProduct.element = utils.createDOMFromHTML(generatedHTML);
-//(Użycie metody utils.createDOMFromHTML. Przyjęła ona kod HTML w formie tekstu jako argument i zwraca element DOM na nim oparty)
+      //(Użycie metody utils.createDOMFromHTML. Przyjęła ona kod HTML w formie tekstu jako argument i zwraca element DOM na nim oparty)
 
       /* find menu container */
       const menuContainer = document.querySelector(select.containerOf.menu);
-// (użyta została metoda querySelector by znaleźć kontener produktów, którego selektor zapisany jest w select.containerOf.menu na górze pliku)
+      // (użyta została metoda querySelector by znaleźć kontener produktów, którego selektor zapisany jest w select.containerOf.menu na górze pliku)
 
       /* add element to menu */
       menuContainer.appendChild(thisProduct.element);
-// za pomocą metody appendChil, dodajemy stworzony element do menu 
+      // za pomocą metody appendChil, dodajemy stworzony element do menu 
 
     }
   }
 
-  initData: function(){   /* To miało być nad deklaracją app.init, ale nie wiem czy umięsliłem to w dobrym miejscu*/
-    const thisApp = this;
-                                        //Przypisanie referencji pod właściwość Data
-    thisApp.data = dataSource;    
-  }
-
   const app = {
+    initData: function(){   /* To miało być nad deklaracją app.init, ale nie wiem czy umięsliłem to w dobrym miejscu*/
+      const thisApp = this;   //Przypisanie referencji pod właściwość Data
+                                        
+      thisApp.data = dataSource;    
+    },
+
     initMenu: function(){
       const thisApp = this;           /*na początku metody app.initMenu */
 
@@ -119,3 +121,4 @@
 
   app.init();
 }
+
