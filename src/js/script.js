@@ -59,8 +59,9 @@
       thisProduct.id = id;            
       thisProduct.data = data;
 
-      thisProduct.renderInMenu();   
-
+      thisProduct.renderInMenu(); 
+      thisProduct.getElements();  
+      thisProduct.initAccordion();
       /* klasa Product za pomocą metody renderInMenu bierze dane źródłowe produktu, "wrzuca je" do szablonu, i tak powstaje kod HTML pojedynczego produktu. Ponieważ metoda renderInMenu jest uruchamiana w konstruktorze klasy, to przy tworzeniu każdej nowej instancji dla danego produktu, od razu renderuje się on na stronie. */
 
       console.log('new Product:', thisProduct);
@@ -86,10 +87,47 @@
       // za pomocą metody appendChil, dodajemy stworzony element do menu 
 
     }
+
+    getElements(){
+      const thisProduct = this;
+    
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
+      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+    }
+
+    initAccorion(){                 // SAMODZIELNIE
+      const thisProduct = this;
+      
+      /* find the clickable trigger (the element that should react to clicking) */
+      const clickableTrigger = document.querySelector(select.menuProduct.clickable);
+
+      /* START: add event listener to clickable trigger on event click */
+      clickableTrigger.addEventListener('click', function(event) {
+
+        event.preventDefault();
+        /* prevent default action for event */
+
+        const activeProduct = document.querySelector('.active');
+        /* find active product (product that has active class) */
+
+        if (activeProduct != thisProduct.element){
+          activeProduct.classList.remove('active');
+        }
+        /* if there is active product and it's not thisProduct.element, remove class active from it */
+          
+
+        thisProduct.element.classList.toggle('active');
+        /* toggle active class on thisProduct.element */
+      });
+
+    }
   }
 
   const app = {
-    initData: function(){   /* To miało być nad deklaracją app.init, ale nie wiem czy umięsliłem to w dobrym miejscu*/
+    initData: function(){  
       const thisApp = this;   //Przypisanie referencji pod właściwość Data
                                         
       thisApp.data = dataSource;    
@@ -122,3 +160,6 @@
   app.init();
 }
 
+/* app.initData ma zadanie przygotować nam łatwy dostęp do danych. Przypisuje więc do app.data (właściwości całego obiektu app) referencję do dataSource, czyli po prostu danych, z których będziemy korzystać z aplikacji. Znajduje się tam m.in. obiekt products ze strukturą naszych produktów. 
+
+app.initMenu jest wywoływana po pierwszej, gdyż korzysta z przygotowanej wcześniej referencji do danych (thisApp.data). Jej zadaniem jest przejście po wszystkich obiektach produktów z thisApp.data.products (cake, breakfast itd.) i utworzenie dla każdego z nich instancji klasy Product. Przy tworzeniu każdej instancji uruchamia się funkcja konstruktora, która uruchamia dla danego obiektu metodę renderInMenu. Ta tworzy element DOM wygenerowany na podstawie szablonu HTML reprezentujący właśnie dany produkt i "dokleja" go do strony. Czyli najprościej mówiąc, metoda app.initMenu przejdzie po każdym produkcie z osobna i stworzy dla niego instancję Product, czego wynikiem będzie również utworzenie na stronie reprezentacji HTML każdego z produktów w thisApp.data.products.*/
