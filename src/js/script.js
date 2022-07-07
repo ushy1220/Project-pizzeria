@@ -5,7 +5,7 @@
 
   const select = {
     templateOf: {
-      menuProduct: '#template-menu-product',
+      menuProduct: '#template-menu-product',    //selektor szablonu produktu wykorzystany niżej
     },
     containerOf: {
       menu: '#product-list',
@@ -48,19 +48,45 @@
     }
   };
 
-  const templates = {
+  const templates = {   //tu wykorzystany jest selektor szablonu z pocątku pliku
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
-  };
+  };      //w obiekcie templates (szablony), Metoda menuProduct tworzona jest za pomocą biblioteki Handlebars
 
   class Product{
-    constructor(){
+    constructor(id, data){
       const thisProduct = this;
+      
+      thisProduct.id = id;            
+      thisProduct.data = data;
+
+      thisProduct.renderInMenu();   
 
       console.log('new Product:', thisProduct);
     }
+
+    renderInMenu(){       // RENDEROWANIE (TWORZENIE) PRODUKTÓW W MENU 
+      const thisProduct = this;
+      
+      /* generate HTML based on template */
+      const generatedHTML = templates.menuProduct(thisProduct.data); 
+// (wywołanie metody templates.menuProduct i przekazanie jej danych produktu)
+
+      /* create element using utils.createElementFromHTML */
+      thisProduct.element = utils.createDOMFromHTML(generatedHTML);
+//(Użycie metody utils.createDOMFromHTML. Przyjęła ona kod HTML w formie tekstu jako argument i zwraca element DOM na nim oparty)
+
+      /* find menu container */
+      const menuContainer = document.querySelector(select.containerOf.menu);
+// (użyta została metoda querySelector by znaleźć kontener produktów, którego selektor zapisany jest w select.containerOf.menu na górze pliku)
+
+      /* add element to menu */
+      menuContainer.appendChild(thisProduct.element);
+// za pomocą metody appendChil, dodajemy stworzony element do menu 
+
+    }
   }
 
-  initData: function(){
+  initData: function(){   /* To miało być nad deklaracją app.init, ale nie wiem czy umięsliłem to w dobrym miejscu*/
     const thisApp = this;
                                         //Przypisanie referencji pod właściwość Data
     thisApp.data = dataSource;    
@@ -68,12 +94,13 @@
 
   const app = {
     initMenu: function(){
-      const thisApp = this;
+      const thisApp = this;           /*na początku metody app.initMenu */
 
-      console.log('thisApp.data:', thisApp.data);
+      console.log('thisApp.data:', thisApp.data); 
 
-      const testProduct = new Product();
-      console.log('testProduct:', testProduct);
+      for(let productData in thisApp.data.products){
+        new Product(productData, thisApp.data.products[productData]);
+      }
     },
 
     init: function(){
