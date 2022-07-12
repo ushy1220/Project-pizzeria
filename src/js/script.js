@@ -32,6 +32,26 @@ const select = {
       linkIncrease: 'a[href="#more"]',
     },
   },
+  // CODE ADDED START
+  cart: {
+    productList: '.cart__order-summary',
+    toggleTrigger: '.cart__summary',
+    totalNumber: `.cart__total-number`,
+    totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
+    subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
+    deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
+    form: '.cart__order',
+    formSubmit: '.cart__order [type="submit"]',
+    phone: '[name="phone"]',
+    address: '[name="address"]',
+  },
+  cartProduct: {
+    amountWidget: '.widget-amount',
+    price: '.cart__product-price',
+    edit: '[href="#edit"]',
+    remove: '[href="#remove"]',
+  },
+  // CODE ADDED END
 };
 
 const classNames = {
@@ -39,6 +59,11 @@ const classNames = {
     wrapperActive: 'active',
     imageVisible: 'active',
   },
+  // CODE ADDED START
+  cart: {
+    wrapperActive: 'active',
+  },
+  // CODE ADDED END
 };
 
 const settings = {
@@ -46,7 +71,15 @@ const settings = {
     defaultValue: 1,
     defaultMin: 1,
     defaultMax: 9,
-  }
+  },
+  cart: {
+    defaultDeliveryFee: 20,
+  },
+  db: {
+    url: '//localhost:3131',
+    products: 'products',
+    orders: 'orders',
+  },
 };
 
 const templates = {   //tu wykorzystany jest selektor szablonu z pocątku pliku
@@ -68,7 +101,7 @@ class Product{
     thisProduct.processOrder();
     /* klasa Product za pomocą metody renderInMenu bierze dane źródłowe produktu, "wrzuca je" do szablonu, i tak powstaje kod HTML pojedynczego produktu. Ponieważ metoda renderInMenu jest uruchamiana w konstruktorze klasy, to przy tworzeniu każdej nowej instancji dla danego produktu, od razu renderuje się on na stronie. */
 
-    console.log('new Product:', thisProduct);
+    //console.log('new Product:', thisProduct);
   }
 
   renderInMenu(){       // RENDEROWANIE (TWORZENIE) PRODUKTÓW W MENU 
@@ -134,7 +167,7 @@ class Product{
 
   initOrderForm(){
     const thisProduct = this;
-    console.log(this.initOrderForm);
+    //console.log(this.initOrderForm);
 
     thisProduct.form.addEventListener('submit', function(event){
       event.preventDefault();
@@ -159,7 +192,7 @@ class Product{
       
     // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
     const formData = utils.serializeFormToObject(thisProduct.form);
-    console.log('formData', formData);
+    //console.log('formData', formData);
       
     // set price to default price
     let price = thisProduct.data.price;   // Zmienna w której będziemy trzymać naszą cenę
@@ -169,14 +202,14 @@ class Product{
 
       // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
       const param = thisProduct.data.params[paramId];
-      console.log(paramId, param);
+      //console.log(paramId, param);
       
       // for every option in this category
       for(let optionId in param.options) {
         
         // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
         const option = param.options[optionId];
-        console.log(optionId, option);
+        //console.log(optionId, option);
 
         // check if there is param with a name of paramId in formData and if it includes optionId
         const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
@@ -256,7 +289,7 @@ class Product{
       
     // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
     const formData = utils.serializeFormToObject(thisProduct.form);
-    console.log('formData', formData);
+    //console.log('formData', formData);
     
     const params = {};
 
@@ -303,8 +336,8 @@ class AmountWidget{
     thisWidget.setValue(thisWidget.input.value || settings.amountWidget.defaultValue);
     thisWidget.initActions();
     
-    console.log('amountWidget:', thisWidget);
-    console.log('constructor arguments:', element);  
+    //console.log('amountWidget:', thisWidget);
+    //console.log('constructor arguments:', element);  
   }
 
   getElements(element){
@@ -356,13 +389,18 @@ class AmountWidget{
   announce(){
     const thisWidget = this;
 
-    const event = new Event('updated');
+    const event = new CustomEvent('updated', {
+      bubbles: true                                                   //MENTOR!! ????????????????????????????????????????????
+      /* używamy innego rodz. eventu, którego właściwość "Bubbles" możemy kontrolować. dzięki niej event będzie działał emitowany na tym elemencie oraz na jego rodzicu, dziadku itd aż do <body>, document, window. 
+      W PRZYPADKU CUSTOM EVENTU BĄBELKOWANIE MUSIMY WŁĄCZYĆ SAMI */
+
+    });
     thisWidget.element.dispatchEvent(event);
   }
 
 }
 
-class Cart{
+class Cart{  //KOSZYK
   constructor(element){
     const thisCart = this;
 
@@ -370,7 +408,7 @@ class Cart{
 
     thisCart.getElements(element);
 
-    console.log('new Cart', thisCart);
+    //console.log('new Cart', thisCart);
 
     thisCart.initActions();
   }
@@ -382,6 +420,12 @@ class Cart{
 
     thisCart.dom.wrapper = element;
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.templateOf.menuProduct);
+    thisCart.dom.deliveryFee = thisCart.dom.wrapper.querySelector(select.cart.deliveryFee);
+    thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
+    thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelector(select.cart.totalPrice);
+    thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
+
   }
 
   initActions(){
@@ -390,12 +434,170 @@ class Cart{
     thisCart.dom.toggleTrigger.addEventListener('click', function(){
       thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
     });
+
+    thisCart.dom.productList.addEventListener('updated', function(){
+      thisCart.update();
+    });
+
+    thisCart.dom.productList.addEventListener('remove', function(event){
+      thisCart.remove(event.detail.cartProduct);
+    });
+
+    thisCart.dom.form.addEventListener('submit', function(event){
+      event.preventDefault();
+      thisCart.sendOrder();
+    });
   }
 
   add(menuProduct){
     // const thisCart = this;
 
-    console.log('adding product', menuProduct);
+    // console.log('adding product', menuProduct);
+
+    const thisCart = this;
+      
+    /* generate HTML based on template */
+    const generatedHTML = templates.cartProduct(menuProduct); 
+    // (utworzenie kodu HTML i zapisanie go w stałej. Obiektem z danymi dla szablonu są podstawowe dane o produkcie otrzymany w argumencie)
+
+    const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+    //  zamiana powyższego kodu na element DOM i zapisanie w stałej "generatedDOM"
+
+    thisCart.dom.productList.appendChild(generatedDOM);
+    // za pomocą metody appendChil, dodajemy stworzony element DOM do menu
+
+    thisCart.products.push(new CartProduct(menuProduct, generatedDOM)); 
+    /* jednocześnie tworzymy nową instancję klasy "new CartProduct" oraz dodamy ją do tablicy "thisCart.products". 
+    Dzięki temu będziemy mieli stały dostęp do instancji wszystkich produktów. Właśnie poprzez tę tablicę */
+    
+    // console.log('thisCart.products', thisCart.products);
+
+    thisCart.update();
+  }
+
+  update(){
+    const thisCart = this;
+
+    const deliveryFee = settings.cart.defaultDeliveryFee;
+    const totalNumber = 0;
+    const subtotalPrice = 0;
+
+    for(let cartProduct of thisCart.products){
+      thisCart.totalNumber += cartProduct.amount;
+      // pętla zwiększa "totalNumber" o liczbę sztuk danego produktu
+
+      thisCart.subtotalPrice += cartProduct.price;
+      // pętla zwiększa "subtotalPrice" o cenę całkowitą produktu (właściwość price)
+    }
+
+    if(thisCart.totalNumber !== 0){
+      thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
+      // właściwość koszyka, której wartością ma być cena całkowita (kwota za produkty i koszt dostawy)
+
+    } else {
+      thisCart.totalPrice = 0;
+      thisCart.deliveryFee = 0;
+      // jeśli w koszyku nie ma ani jednego produktu, to nie ma sensu w cenie końcowej wliczać "deliveryFee". Wtedy cena końcowa powinna wynieść 0
+    }
+
+    console.log('totalPrice:', totalPrice, 'deliveryFee:', deliveryFee, 'totalNumber:', totalNumber, 'subtotalPrice:', subtotalPrice);
+
+    //Metoda ma odpowiednio aktualizować HTML koszyka, aby użytkownik widział poprawne dane (cena, koszt dostawy itp)
+    thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
+    thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
+    thisCart.dom.deliveryFee.innerHTML = thisCart.deliveryFee;
+
+    for(let totalPriceHolder of thisCart.dom.totalPrice){
+      totalPriceHolder.innerHTML = thisCart.totalPrice;
+    }
+  }
+
+  remove(){
+    const thisCart = this;
+
+    cartProduct.dom.wrapper.remove();
+    //Usunięcie reprezentacji produktu z HTML'a
+
+    const indexOfProduct = thisCart.products.indexOf(cartProduct);
+    thisCart.products.splice(indexOfProduct, 1);
+    //Usunięcie informacji o danym produkcie z tablicy thisCart.product
+
+    thisCart.update();
+    //Wywołać metodę update w celu ponownego przeliczenia sum po usunięciu produktu
+  }
+}
+
+class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
+  constructor(element, menuProduct){
+    const thisCartProduct = this;
+
+    thisCartProduct.id = menuProduct.id;
+    thisCartProduct.name = menuProduct.name;
+    thisCartProduct.amount = menuProduct.amount;
+    thisCartProduct.priceSingle = menuProduct.priceSingle;
+    thisCartProduct.price = menuProduct.price;
+    thisCartProduct.params = menuProduct.params;
+
+    thisCartProduct.getElements(element);
+    thisCartProduct.initAmountWidget();
+    thisCartProduct.initActions();
+
+    // console.log('thisCartProduct:', thisCartProduct);
+  }
+
+  getElements(element){
+    const thisCartProduct = this;
+
+    thisCartProduct.dom = {};
+
+    thisCartProduct.dom.wrapper = element;
+    thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+    thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
+    thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
+    thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
+    // Utworzenie nowej właściwości obiektu "thisCartProtuct.dom.wrapper" i przypisanie mu elementów znalezionych we wrapperze. ich selektory są w "select.cartProduct"
+
+  }
+
+  initAmountWidget(){
+    const thisCartProduct = this;
+
+    thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidgetElem);
+
+    thisCartProduct.dom.amountWidgetElem.addEventListener('updated', function(){
+      
+      //zawartość handlera:
+
+      thisCartProduct.amount = thisCartProduct.amountWidget.value;
+      //ustawienie nowej wartości dla właściwości amount
+
+      thisCartProduct.price = thisCartProduct.amount * thisCartProduct.priceSingle;
+      //wyświetlanie na stronie nowej przeliczonej ceny tego produktu z uwzględnieniem liczby sztuk
+    });
+  }
+
+  remove(){
+    const thisCartProduct = this;
+
+    const event = new CustomEvent('remove', {  //Wykorzystujemy custom event z właściwością "bubbles"
+      bubbles: true,
+      detail: {           
+        cartProduct: thisCartProduct,   //Szczegóły przekazywane wraz z eventem
+      },
+    });
+
+    thisCartProduct.dom.wrapper.dispatchEvent(event);
+  }
+
+  initActions(){
+    thisCartProduct.dom.edit.addEventListener('click', function(event){
+      event.preventDefault();
+    });
+
+    thisCartProduct.dom.remove.addEventListener('click', function(event){
+      event.preventDefault();
+      thisCartProduct.remove();
+    });
   }
 }
 
@@ -409,7 +611,7 @@ const app = {
   initMenu: function(){
     const thisApp = this;           /*na początku metody app.initMenu */
 
-    console.log('thisApp.data:', thisApp.data); 
+    //console.log('thisApp.data:', thisApp.data); 
 
     for(let productData in thisApp.data.products){
       new Product(productData, thisApp.data.products[productData]);
@@ -418,12 +620,13 @@ const app = {
 
   init: function(){
     const thisApp = this;
+    /*
     console.log('*** App starting ***');
     console.log('thisApp:', thisApp);
     console.log('classNames:', classNames);
     console.log('settings:', settings);
     console.log('templates:', templates);
-      
+    */
     thisApp.initData();         
 
     thisApp.initMenu();
