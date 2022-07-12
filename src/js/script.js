@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* global Handlebars, utils, dataSource */ // eslint-disable-line no-unused-vars
 
 
@@ -148,6 +149,7 @@ class Product{
       
     thisProduct.cartButton.addEventListener('click', function(event){
       event.preventDefault();
+      thisProduct.addToCart();
       thisProduct.processOrder();   //Przeliczanie ceny
     });
   }
@@ -208,7 +210,7 @@ class Product{
     /* add new property "priceSingle" to thisProduct */
     thisProduct.priceSingle = price / thisProduct.amountWidget.value;
     thisProduct.price = price;
-
+    /*  każdorazowe uruchomienie "processOrder" będzie równało się z aktualizacją "thisProduct.priceSingle", które będzie zawsze zwracała aktualną cenę jednostkową. "processOrder" uruchamia się automatycznie za każdym razem kiedy coś zmieniamy */
 
     // update calculated price in the HTML
     thisProduct.priceElem.innerHTML = price;      //wpisujemy przeliczoną cenę do elementu w HTML-u
@@ -223,6 +225,74 @@ class Product{
       thisProduct.processOrder();
     });
   }
+
+  addToCart(){
+    const thisProduct = this;
+
+    app.cart.add(thisProduct.prepareCartProduct);
+    /*przekazuje ona całą instancję jako argument metody "app.cart.add". W ten sposób odwołujemy się do metody "add" klasy Cart
+    Metoda "add" otrzymuje referencję do tej instancji, co pozwoli jej odczytywać jej właściwości i wykonywać jej metody*/
+
+
+  }
+
+  prepareCartProduct(){
+    const thisProduct = this;
+
+    const productSummary = {
+      id: thisProduct.id,
+      name: thisProduct.data.name,
+      amount: thisProduct.amountWidget.value,
+      priceSingle: thisProduct.priceSingle,
+      price: thisProduct.price, // Dlaczego??? skoro miałą zostać pomnożona?!
+      params: thisProduct.prepareCartProductParams(),
+    };
+
+    return productSummary;
+  }
+
+  prepareCartProductParams(){
+    const thisProduct = this;   //Przygotowanie dostępu do formularza w postaci JSowego obiektu 
+      
+    // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
+    const formData = utils.serializeFormToObject(thisProduct.form);
+    console.log('formData', formData);
+    
+    const params = {};
+
+    // for every category (param)...
+    for(let paramId in thisProduct.data.params) {
+
+      // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+      const param = thisProduct.data.params[paramId];
+      console.log(paramId, param);
+
+      // create category param in params const eg. params = { ingredients: { name: 'Ingredients', options: {}}}
+      params[paramId] = {
+        label: param.label,
+        options: {}
+      };
+
+      // for every option in this category
+      for(let optionId in param.options) {
+        
+        // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+        const option = param.options[optionId];
+        console.log(optionId, option);
+
+        // check if there is param with a name of paramId in formData and if it includes optionId
+        const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+        // (Czy w formData istnieje właściwość o nazwie zgodnej z nazwą kategorii?)
+
+        //przejście po wszystkich opcjach produktów i sprawdzanie czy są wybrane
+        if(optionSelected){
+          params[paramId].options[optionId] = option.label;
+        } 
+      }
+    }
+
+    return params;
+  }
 }
 
 class AmountWidget{
@@ -230,11 +300,11 @@ class AmountWidget{
     const thisWidget = this;
 
     thisWidget.getElements(element);
-    thisWidget.setValue(thisWidget.input.value);
+    thisWidget.setValue(thisWidget.input.value || settings.amountWidget.defaultValue);
     thisWidget.initActions();
-
-    console.log('amountWidget:' thisWidget);
-    console.log('constructor arguments:' element);
+    
+    console.log('amountWidget:', thisWidget);
+    console.log('constructor arguments:', element);  
   }
 
   getElements(element){
@@ -255,7 +325,7 @@ class AmountWidget{
 
     if(thisWidget.value !== newValue && !isNaN(newValue) && 
     newValue >= settings.amountWidget.defaultMin &&  // wartości są sprawdzane wg określonego zakresu. Nie większe niż maksymalna 
-    newValue <= settings.amountWidget.defaultMax){   // wartość i nie mniejsza niż minimalna. 
+    newValue <= settings.amountWidget.defaultMax){   // wartość domyślna i nie mniejsze niż minimalna. 
       thisWidget.value = newValue;
     }
 
@@ -267,8 +337,8 @@ class AmountWidget{
 
   initActions(){
 
+    /* dla "thisWidget.input" dodany został nasłuchiwacz eventu "change", dla którego handler użyje metody "setValue" z takim samym argumentem, jak w konstruktorze (wartość inputa) */
     thisWidget.input.addEventListener('change', function(){ 
-      /* dla "thisWidget.input" dodany został nasłuchiwacz eventu "change", dla którego handler użyje metody "setValue" z takim samym argumentem, jak w konstruktorze (wartość inputa) */
       thisWidget.setValue(thisWidget.input.value);
     });
 
@@ -290,6 +360,43 @@ class AmountWidget{
     thisWidget.element.dispatchEvent(event);
   }
 
+}
+
+class Cart{
+  constructor(element){
+    const thisCart = this;
+
+    thisCart.products = []; // Tablica przechowująca dane dodane do koszyka
+
+    thisCart.getElements(element);
+
+    console.log('new Cart', thisCart);
+
+    thisCart.initActions();
+  }
+
+  getElements(element){
+    const thisCart = this;
+
+    thisCart.dom = {};  // Obiekt ułatwiający nawigację po klasie. Schowane są w nim referencje elementów DOM
+
+    thisCart.dom.wrapper = element;
+    thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+  }
+
+  initActions(){
+    const thisCart = this;
+
+    thisCart.dom.toggleTrigger.addEventListener('click', function(){
+      thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+    });
+  }
+
+  add(menuProduct){
+    // const thisCart = this;
+
+    console.log('adding product', menuProduct);
+  }
 }
 
 const app = {
@@ -320,7 +427,16 @@ const app = {
     thisApp.initData();         
 
     thisApp.initMenu();
+
+    thisApp.initCart();
   },
+
+  initCart: function(){
+    const thisApp = this;
+
+    const cartElem = document.querySelector(select.containerOf.cart);
+    thisApp.cart = new Cart(cartElem);
+  }
 };
 
 app.init();
