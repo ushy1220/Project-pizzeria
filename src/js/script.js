@@ -139,7 +139,7 @@ class Product{
     thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
   }
 
-  initAccorion(){
+  initAccordion(){
     const thisProduct = this;                                                         //DLACZEGO JUŻ NIE DZIAŁA????
       
     /* find the clickable trigger (the element that should react to clicking) */
@@ -369,6 +369,7 @@ class AmountWidget{
   }
 
   initActions(){
+    const thisWidget = this;
 
     /* dla "thisWidget.input" dodany został nasłuchiwacz eventu "change", dla którego handler użyje metody "setValue" z takim samym argumentem, jak w konstruktorze (wartość inputa) */
     thisWidget.input.addEventListener('change', function(){ 
