@@ -7,6 +7,7 @@
 const select = {
   templateOf: {
     menuProduct: '#template-menu-product',    //selektor szablonu produktu wykorzystany niżej
+    cartProduct: '#template-cart-product',
   },
   containerOf: {
     menu: '#product-list',
@@ -82,9 +83,13 @@ const settings = {
   },
 };
 
-const templates = {   //tu wykorzystany jest selektor szablonu z pocątku pliku
+const templates = {
   menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
-};      //w obiekcie templates (szablony), Metoda menuProduct tworzona jest za pomocą biblioteki Handlebars
+  // CODE ADDED START
+  cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
+  // CODE ADDED END
+};
+
 
 class Product{
   constructor(id, data){
@@ -142,9 +147,6 @@ class Product{
   initAccordion(){
     const thisProduct = this;                                                         //DLACZEGO JUŻ NIE DZIAŁA????
       
-    /* find the clickable trigger (the element that should react to clicking) */
-    // const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);  //DLACZEGO JUŻ NIE DZIAŁA????
-
     /* START: add event listener to clickable trigger on event click */
     thisProduct.accordionTrigger.addEventListener('click', function(event) {                     //DLACZEGO JUŻ NIE DZIAŁA????
 
@@ -262,7 +264,7 @@ class Product{
   addToCart(){
     const thisProduct = this;
 
-    app.cart.add(thisProduct.prepareCartProduct);
+    app.cart.add(thisProduct.prepareCartProduct());
     /*przekazuje ona całą instancję jako argument metody "app.cart.add". W ten sposób odwołujemy się do metody "add" klasy Cart
     Metoda "add" otrzymuje referencję do tej instancji, co pozwoli jej odczytywać jej właściwości i wykonywać jej metody*/
 
@@ -421,12 +423,12 @@ class Cart{  //KOSZYK
 
     thisCart.dom.wrapper = element;
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
-    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.templateOf.menuProduct);
+    thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     thisCart.dom.deliveryFee = thisCart.dom.wrapper.querySelector(select.cart.deliveryFee);
     thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
-    thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelector(select.cart.totalPrice);
+    thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice);
     thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
-
+    thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
   }
 
   initActions(){
@@ -479,9 +481,9 @@ class Cart{  //KOSZYK
   update(){
     const thisCart = this;
 
-    const deliveryFee = settings.cart.defaultDeliveryFee;
-    const totalNumber = 0;
-    const subtotalPrice = 0;
+    thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
+    thisCart.totalNumber = 0;
+    thisCart.subtotalPrice = 0;
 
     for(let cartProduct of thisCart.products){
       thisCart.totalNumber += cartProduct.amount;
@@ -501,7 +503,7 @@ class Cart{  //KOSZYK
       // jeśli w koszyku nie ma ani jednego produktu, to nie ma sensu w cenie końcowej wliczać "deliveryFee". Wtedy cena końcowa powinna wynieść 0
     }
 
-    console.log('totalPrice:', totalPrice, 'deliveryFee:', deliveryFee, 'totalNumber:', totalNumber, 'subtotalPrice:', subtotalPrice);
+    // console.log('totalPrice:', totalPrice, 'deliveryFee:', deliveryFee, 'totalNumber:', totalNumber, 'subtotalPrice:', subtotalPrice);
 
     //Metoda ma odpowiednio aktualizować HTML koszyka, aby użytkownik widział poprawne dane (cena, koszt dostawy itp)
     thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
@@ -513,7 +515,7 @@ class Cart{  //KOSZYK
     }
   }
 
-  remove(){
+  remove(cartProduct){
     const thisCart = this;
 
     cartProduct.dom.wrapper.remove();
@@ -529,7 +531,7 @@ class Cart{  //KOSZYK
 }
 
 class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
-  constructor(element, menuProduct){
+  constructor(menuProduct, element){
     const thisCartProduct = this;
 
     thisCartProduct.id = menuProduct.id;
@@ -548,11 +550,13 @@ class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
 
   getElements(element){
     const thisCartProduct = this;
+    console.log(element);
+    console.log(select.cartProduct.amountWidget);
 
     thisCartProduct.dom = {};
 
     thisCartProduct.dom.wrapper = element;
-    thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+    thisCartProduct.dom.amountWidgetElem = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
     thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
     thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
     thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
@@ -591,6 +595,8 @@ class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
   }
 
   initActions(){
+    const thisCartProduct = this;
+
     thisCartProduct.dom.edit.addEventListener('click', function(event){
       event.preventDefault();
     });
