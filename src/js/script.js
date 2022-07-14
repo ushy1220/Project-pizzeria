@@ -611,8 +611,28 @@ class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
 const app = {
   initData: function(){  
     const thisApp = this;   //Przypisanie referencji pod właściwość Data
-                                        
-    thisApp.data = dataSource;    
+
+    thisApp.data = {};    
+    /*  -Połącz się z adresem url przy użyciu metody fetch.
+        -Jeśli połączenie się zakończy, to wtedy (pierwsze .then) skonwertuj dane do obiektu JS-owego.
+        -Kiedy i ta operacja się zakończy, to wtedy (drugie .then) pokaż w konsoli te skonwertowane dane. */
+    const url = settings.db.url + '/' + settings.db.products;
+
+    fetch(url) //za pomocą "fetch" wysyłamy zapytanie (request) pod podany adres endpointu (domyślnie korzysta z metody GET)
+      .then(function(rawResponse){  // konwertujemy odpowiedź na obiekt JSowy
+        return rawResponse.json(); // otrzyma odpowiedź, która jest w formacie JSON
+      })
+      .then(function(parsedResponse){ // kiedy konwersja się zakończy...
+        console.log('parsedResponse', parsedResponse); // ...Wyświetlamy odpowiedź w konsoli
+
+        /* save parsedResponse as thisApp.data.products */
+        thisApp.data.products = parsedResponse;
+
+        /* execute initMenu method */
+        thisApp.initMenu();
+      });
+
+    console.log('thisApp.data', JSON.stringify(thisApp.data));
   },
 
   initMenu: function(){
@@ -621,7 +641,7 @@ const app = {
     //console.log('thisApp.data:', thisApp.data); 
 
     for(let productData in thisApp.data.products){
-      new Product(productData, thisApp.data.products[productData]);
+      new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
     }
   },
 
@@ -635,8 +655,6 @@ const app = {
     console.log('templates:', templates);
     */
     thisApp.initData();         
-
-    thisApp.initMenu();
 
     thisApp.initCart();
   },
