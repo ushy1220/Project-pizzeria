@@ -429,6 +429,8 @@ class Cart{  //KOSZYK
     thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice);
     thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
     thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
+    thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
+    thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
   }
 
   initActions(){
@@ -447,7 +449,7 @@ class Cart{  //KOSZYK
     });
 
     thisCart.dom.form.addEventListener('submit', function(event){
-      event.preventDefault();
+      event.preventDefault(); // zablokowanie domyślnego zachowania aby wysyłka nie przeładowywała strony
       thisCart.sendOrder();
     });
   }
@@ -527,6 +529,36 @@ class Cart{  //KOSZYK
 
     thisCart.update();
     //Wywołać metodę update w celu ponownego przeliczenia sum po usunięciu produktu
+  }
+
+  sendOrder(){
+    const thisCart = this;
+
+    const url = settings.db.url + '/' + settings.db.orders;
+  }
+
+  payload(){
+    const thisCart = this;
+
+    // address: adres klienta wpisany w koszyku,
+    thisCart.dom.address =
+
+    // phone: numer telefonu wpisany w koszyku,
+    
+
+    //totalPrice: całkowita cena za zamówienie,
+    
+
+    //subtotalPrice: cena całkowita - koszt dostawy,
+    
+
+    //totalNumber: całkowita liczba sztuk,
+    
+
+    //deliveryFee: koszt dostawy,
+    
+    
+    //products: tablica obecnych w koszyku produktów
   }
 }
 
