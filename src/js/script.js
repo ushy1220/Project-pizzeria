@@ -531,34 +531,54 @@ class Cart{  //KOSZYK
     //Wywołać metodę update w celu ponownego przeliczenia sum po usunięciu produktu
   }
 
-  sendOrder(){
+  sendOrder(){ //obiekt, którego oczekuje serwer w przypadku złożenia zamówienia
     const thisCart = this;
 
-    const url = settings.db.url + '/' + settings.db.orders;
-  }
+    const url = settings.db.url + '/' + settings.db.orders; 
+    /* Stała url, w której umieszczamy adres endpointu zamówienia (orders) */
 
-  payload(){
-    const thisCart = this;
+    const payload = {
+    /* stała zawierająca dane, które będą wysyłane do serwera */
 
-    // address: adres klienta wpisany w koszyku,
-    thisCart.dom.address =
+      // address: adres klienta wpisany w koszyku,
+      adress: thisCart.dom.address.value,
 
-    // phone: numer telefonu wpisany w koszyku,
-    
+      // phone: numer telefonu wpisany w koszyku,
+      phone: thisCart.dom.phone.value,
 
-    //totalPrice: całkowita cena za zamówienie,
-    
+      //totalPrice: całkowita cena za zamówienie,
+      totalPrice: thisCart.totalPrice,
 
-    //subtotalPrice: cena całkowita - koszt dostawy,
-    
+      //subtotalPrice: cena całkowita - koszt dostawy,
+      subtotalPrice: thisCart.subtotalPrice,
 
-    //totalNumber: całkowita liczba sztuk,
-    
+      //totalNumber: całkowita liczba sztuk,
+      totalNumber: thisCart.totalNumber,
 
-    //deliveryFee: koszt dostawy,
-    
-    
-    //products: tablica obecnych w koszyku produktów
+      //deliveryFee: koszt dostawy,
+      deliveryFee: thisCart.deliveryFee,
+
+      //products: tablica obecnych w koszyku produktów
+      products: [],
+    };
+    console.log('payload: ', payload);
+
+    // Dodajemy do "payload.products" obiekty podsumowania 
+    for(let prod of thisCart.products) {
+      payload.products.push(prod.getData());
+    }
+    console.log(payload);
+
+    /* Stała zawierająca opcje, które skonfigurują zapytanie (request) */
+    const options = {
+      method: 'POST', //zmiana domyślnej metody GET na POST, służąca do wysyłania danych do serwera API
+      headers: { // ustawienie nagłówka, aby serwer wiedział, że wysyłamy dane w postaci JSON
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),  // treść, którą wysyłamy. Metoda "JSON.strigify" konwertuje obiekt "payload" do JSON 
+    };
+
+    fetch(url, options);
   }
 }
 
@@ -637,6 +657,21 @@ class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
       event.preventDefault();
       thisCartProduct.remove();
     });
+  }
+
+  getData(){
+    /* Metoda, która ma zwracać nowy obiekt, z właściwościami instancji "thisCartProduct", które są potrzebne w momencie zapisywania zamówienia (id, amount, price, priceSingle, name, params) */
+    const thisCartProduct = this;
+
+    const prod = {
+      id: thisCartProduct.id,
+      amount: thisCartProduct.amount,
+      price: thisCartProduct.price,
+      priceSingle: thisCartProduct.priceSingle,
+      name: thisCartProduct.name,
+      params: thisCartProduct.params,
+    };
+    return prod;
   }
 }
 
