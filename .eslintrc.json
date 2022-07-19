@@ -6,7 +6,8 @@
     "extends": "eslint:recommended",
     "parserOptions": {
         "ecmaVersion": 2015,
-        "sourceType": "module"
+        "sourceType": "module" 
+        //sourceType daje informacje JS'owi, że pracujemy w trybie modułowym. dzięki temu eslint nie pokaże niektórych błędów
     },
     "rules": {
         "indent": [
