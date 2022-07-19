@@ -1,11 +1,14 @@
 export const select = {
   templateOf: {
-    menuProduct: '#template-menu-product',    //selektor szablonu produktu wykorzystany niżej
+    menuProduct: '#template-menu-product',    //selektor szablonu produktu 
     cartProduct: '#template-cart-product',
+    bookingWidget: '#template-booking-widget', // szablon nowej podstrony (moduł 9)
   },
   containerOf: {
     menu: '#product-list',
     cart: '#cart',
+    pages: '#pages',              //2 nowe selektory do nowych kontenerów (moduł 9)
+    booking: '.booking-wrapper',
   },
   all: {
     menuProducts: '#product-list > .product',
@@ -26,7 +29,29 @@ export const select = {
       linkDecrease: 'a[href="#less"]',
       linkIncrease: 'a[href="#more"]',
     },
+
+    //Na podstronie rezerwacji pojawią się dwa specjalne widgety. Do wyboru godziny i drugi daty. Selektory dla nich: (moduł 9)
+    datePicker: {
+      wrapper: '.date-picker',
+      input: `input[name="date"]`,
+    },
+    hourPicker: {
+      wrapper: '.hour-picker',
+      input: 'input[type="range"]',
+      output: '.output',
+    },
   },
+
+  // selektory do nawigacji i podstawowych elementów podstrony rezerwacji (moduł 9)
+  booking: {
+    peopleAmount: '.people-amount',
+    hoursAmount: '.hours-amount',
+    tables: '.floor-plan .table',
+  },
+  nav: {
+    links: '.main-nav a',
+  },
+
   // CODE ADDED START
   cart: {
     productList: '.cart__order-summary',
@@ -59,6 +84,18 @@ export const classNames = {
     wrapperActive: 'active',
   },
   // CODE ADDED END
+
+  // nowe nazwy klas (moduł 9)
+  booking: {
+    loading: 'loading',
+    tableBooked: 'booked',
+  },
+  nav: {
+    active: 'active',
+  },
+  pages: {
+    active: 'active',
+  } 
 };
   
 export const settings = {
@@ -74,6 +111,26 @@ export const settings = {
     url: '//localhost:3131',
     products: 'products',
     orders: 'orders',
+
+    // (moduł 9)
+    booking: 'booking',
+    event: 'event',
+    dateStartParamKey: 'date_gte',
+    dateEndParamKey: 'date_lte',
+    notRepeatParam: 'repeat=false',
+    repeatParam: 'repeat_ne=false',
+  },
+
+  // ustawienia nowej podstrony rezerwacji (moduł 9)
+  hours: {
+    open: 12,
+    close: 24,
+  },
+  datePicker: {
+    maxDaysInFuture: 14,
+  },
+  booking: {
+    tableIdAttribute: 'data-table',
   },
 };
   
@@ -82,6 +139,9 @@ export const templates = {
   // CODE ADDED START
   cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
   // CODE ADDED END
+
+  // (szablon podstrony rezerwacji) Moduł 9
+  bookingWidget: Handlebars.compile(document.querySelector(select.templateOf.bookingWidget).innerHTML),
 };
   
 // "export" pozwala na używanie treści exportowanej przez inne pliki projektu, ale nie automatycznie. dokończenie jest w app.js
