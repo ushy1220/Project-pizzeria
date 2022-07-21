@@ -3,6 +3,7 @@ import {classNames, select, settings} from './settings.js';
 // nawiasy klamrowe używamy kiedy improtujemy więcej niż 1 obiekt i żaden nie jest domyślny
 import Product from './components/product.js';
 import Cart from './components/cart.js';
+import Booking from './components/booking.js';
 
 export const app = {
 
@@ -137,6 +138,8 @@ export const app = {
     thisApp.initData();         
 
     thisApp.initCart();
+
+    thisApp.initBooking();
   },
 
   initCart: function(){
@@ -150,6 +153,16 @@ export const app = {
     thisApp.productList.addEventlistener('add-to-cart', function(event){
       app.cart.add(event.detail.product);
     });
+  },
+
+  initBooking: function(){
+    const thisApp = this;
+    
+    // Znajdowanie widgetu do rezerwacji stron
+    const bookWidget = document.querySelector(select.containerOf.booking);
+
+    // Tworzenie nowej instancji klasy Booking, i przekazywanie do konstruktora kontener, który przed chwilą znaleźliśmy
+    thisApp.widget = new Booking(bookWidget);
   }
 };
 
