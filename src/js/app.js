@@ -1,11 +1,71 @@
 // improtuj obiekt "settings" z pliku "settings.js"
-import {settings} from './settings.js';
-import {select} from './settings.js';
+import {classNames, select, settings} from './settings.js';
 // nawiasy klamrowe używamy kiedy improtujemy więcej niż 1 obiekt i żaden nie jest domyślny
 import Product from './components/product.js';
 import Cart from './components/cart.js';
 
 export const app = {
+
+  initPages: function(){
+    const thisApp = this;
+
+    thisApp.pages = document.querySelector(select.containerOf.pages).children;
+    // dzieki "children" w własciwosci pages znajda sie wszystkie dzieci kontenera stron (sekcje o id other i booking)
+
+    thisApp.navLinks = document.querySelectorAll(select.nav.links);
+
+    thisApp.activatePage(thisApp.pages[0].id);
+    //w ten sposób znaleźliśmy pierwszą podstronę z thisApp.pages
+
+    for(let link of thisApp.navLinks){
+      link.addEventlistener('click', function(event){
+        
+        //pierwszą rzeczą jaką zapisujemy wewnątrz handlera eventu jest definicja stałej w której zapiszemy obiekt this
+        const clickedElement = this;
+
+        event.preventDefault();
+
+        //w stałej id zapisujemy atrybut href kliknietego elementu w którym zamienimy znak # na pusty ciąg znaków
+        const id = clickedElement.getAttribute('href').replace('#', '');
+
+        // wywołać metodę activatePage z tym id
+        thisApp.activatePage(id);
+
+        // dodanie funkcjonalność zmiany adresu strony URL w zależności od podstrony, na której aktualnie się znajdujemy 
+        window.location.hash = '#' + id;
+      });
+    }
+  },
+
+  activatePage: function(pageId){
+    const thisApp = this;
+
+    // nadanie/odbieranie odpoweidniemu wrapperowi strony (order / booking) klasę active
+    /*     
+      for(let page of thisApp.pages){
+      if(page.id == pageId){
+        page.classList.add(classNames.pages.active);
+      } else {
+        page.classList.remove(classNames.pages.active);
+      } 
+      */
+
+    //to samo co zakomentowany if powyżej
+    for(let page of thisApp.pages){
+      page.classList.toggle(classNames.pages.active, page.id == pageId);
+    }
+
+    // to samo dla linków 
+    for(let link of thisApp.navLinks){ //dla każdego linku w thisApp.navLinks...
+      link.classList.toggle( // ...dodaj/usuń klasę..
+        classNames.nav.active,  // ...zdefiniowaną w classNames.nav.activ...
+        link.getAttribute('href') == '#' + pageId // ...w zależności od tego, czy atrybut href tego linka jest równy # oraz id podstrony, podanej jako argument metodzie activatePage
+      );
+    }
+    /* Załóżmy że metoda activatePage zostałą wykonana i jako argument otrzymałą tekst "order"(pageId). W takim razie dla każdej ze stron zapisanych w thissApp.pages zostanie dodana lub usunieta klasa zapisana w classNAmes.pages.active. To czy klasa zostanie dodana lub usunieta zalezy od tego czy ID tej strony jest równe order(pageId). Dla podstrony "order" zostanie dodana klasa active, a dla każdej innej (np. booking) ten warunek bedzie falszywy wiec ta klasa zostanie odebrana. Nastepnie dla każdego linku zapisanego w thissApp.navLinks zostanie rowniez dodana/odebrana klasa zapisana w classNames.page.active. To czy zostanie zapisana czy nie zależy od tego czy atrybut href jest równy #order */
+  },
+  
+
   initData: function(){  
     const thisApp = this;   //Przypisanie referencji pod właściwość Data
 
@@ -51,6 +111,9 @@ export const app = {
     console.log('settings:', settings);
     console.log('templates:', templates);
     */
+
+    thisApp.initPages();
+
     thisApp.initData();         
 
     thisApp.initCart();
