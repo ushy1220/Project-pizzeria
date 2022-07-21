@@ -3,6 +3,7 @@ import {classNames} from './settings.js';
 import {templates} from './settings.js';
 import {settings} from './settings.js';
 import utils from './settings.js';
+import CartProduct from './cartProduct.js';
 
 class Cart{  //KOSZYK
   constructor(element){

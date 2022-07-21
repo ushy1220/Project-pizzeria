@@ -1,3 +1,6 @@
+import {select} from './settings.js';
+import AmountWidget from './amountwidget.js';
+
 class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
   constructor(menuProduct, element){
     const thisCartProduct = this;
@@ -90,4 +93,5 @@ class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU
     return prod;
   }
 }
-  
+
+export default CartProduct;
