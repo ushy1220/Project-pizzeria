@@ -6,17 +6,34 @@ import Cart from './components/cart.js';
 
 export const app = {
 
-  initPages: function(){
+  initPages: function(){ //Stowrzona została metoda uruchamiana w momencie odświeżania strony
     const thisApp = this;
 
+    /* W tej metodzie znajdujemy wszystkie kontenery podstron... */
     thisApp.pages = document.querySelector(select.containerOf.pages).children;
     // dzieki "children" w własciwosci pages znajda sie wszystkie dzieci kontenera stron (sekcje o id other i booking)
 
+    /* ...oraz wszystkie linki prowadzące do tych podstron */
     thisApp.navLinks = document.querySelectorAll(select.nav.links);
 
-    thisApp.activatePage(thisApp.pages[0].id);
+    /* Następnie z Hasha url'a tej strony pozyskujemy id podstrony, która ma zostać otwarta jako domyślna */
+    const idFromHash = window.location.hash.replace('#/', '');
+
+    let pageMatchingHash = thisApp.pages[0].id;
+
+    /* spr czy któraś z podstron pasuje do tego id, które uzyskaliśmy z adresu strony. Jeżeli nie, zostanie otwarta pierwsza podstrona (let pageMatchingHash = thisApp.pages[0].id;), a jeżeli tak, otwarta zostanie ta podstrona, która pasowała do id uzyskanego z adresu strony*/
+    for(let page of thisApp.pages){
+      if(page.id == idFromHash){
+        pageMatchingHash = page.id;
+        break; //jeśli pierwsza ze stron ma id pasujące do idFromHash, to id zostanie przypisane do zmiennej, a petla zostanie przerwana i pozostale strony nie zostana sprawdzone
+      }
+    } 
+
+    /* Następnie aktywujemy odpowiednią podstronę */
+    thisApp.activatePage(pageMatchingHash);
     //w ten sposób znaleźliśmy pierwszą podstronę z thisApp.pages
 
+    /* Następnie dodajemy nasłuchiwacze do wszystkich linków, które odsyłają do podstron. Na kliknięcie w taki link uzyskujemy id z atrybutu href tego linka, po czym aktywujemy odpowiednia podstrone */
     for(let link of thisApp.navLinks){
       link.addEventlistener('click', function(event){
         
@@ -31,8 +48,11 @@ export const app = {
         // wywołać metodę activatePage z tym id
         thisApp.activatePage(id);
 
-        // dodanie funkcjonalność zmiany adresu strony URL w zależności od podstrony, na której aktualnie się znajdujemy 
-        window.location.hash = '#' + id;
+        /* Przy aktywowaniu podstrony zmieniamy "window.location.hash" na ciąg znaków #/id aktywowanej podstrony */ 
+        window.location.hash = '#/' + id;
+        // "/" zapobiega przewijaniu strony do początku
+
+
       });
     }
   },
