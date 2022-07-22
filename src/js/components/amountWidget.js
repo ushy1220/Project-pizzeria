@@ -30,26 +30,7 @@ class AmountWidget extends BaseWidget{
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
   }
   
-  setValue(value){
-    /* SŁUŻY DO USTAWIANIA NOWYCH WARTOŚCI WIDGETU, ALE TYLKO POD WARUNKIEM, ŻE JEST TO PRAWIDŁOWA WARTOŚĆ (LICZBA Z ZAKRESU ZDEFINIOWANEGO W NASZEJ APLIKACJI) */
-
-    const thisWidget = this;
   
-    const newValue = thisWidget.parseValue(value);
-  
-    /* TODO: Add validation */
-  
-    if(thisWidget.value !== newValue && !isNaN(newValue) && 
-      newValue >= settings.amountWidget.defaultMin &&  // wartości są sprawdzane wg określonego zakresu. Nie większe niż maksymalna 
-      newValue <= settings.amountWidget.defaultMax){   // wartość domyślna i nie mniejsze niż minimalna. 
-      thisWidget.value = newValue;
-    }
-  
-    thisWidget.value = newValue;
-    thisWidget.dom.input.value = thisWidget.value;
-  
-    thisWidget.announce();
-  }
 
   parseValue(value){
     /* Zajmie się przekształcaniem wartości, którą chcemy ustawić na odpowiedni typ lub formę. W przypadku widgetu daty musi to być liczba, ale to co użytkownik wpisuje na stronie jest tekstem, dlatego użyjemy funkcji parseInt  */
@@ -59,6 +40,18 @@ class AmountWidget extends BaseWidget{
   
   isValid(value){
     /* Będzie zwracać prawdę/fałsz w zależności od tego, czy wartość, którą chcemy ustawić dla tego widgetu jest prawidłowa wg kryterium, jakie ustawimy dla tego widgetu */
+
+    return !isNaN(value) //sprawdza, czy value NIE jest NIELICZBĄ
+    && value >= settings.amountWidget.defaultMin   // wartości są sprawdzane wg określonego zakresu. Nie większe niż maksymalna 
+    && value <= settings.amountWidget.defaultMax;   // wartość domyślna i nie mniejsze niż minimalna. 
+  }
+
+  renderValue(){
+    /* Ta metoda służy temu, aby bieżąca wartość widgetu zostałą wyświetlona na stronie (wyrenderowana) */
+    const thisWidget = this;
+
+    thisWidget.dom.input.value = thisWidget.value;
+
   }
 
   initActions(){
