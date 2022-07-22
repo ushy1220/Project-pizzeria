@@ -1,4 +1,5 @@
 class BaseWidget{
+  /* klasa nadrzędna dla innych modułów opierających się na tej klasie ale dopisujących do niej cos tylko dla sibeie */
   constructor(wrapperElement, initialValue){
     /* 
     wrapperElement- element DOM w którym znajduje się ten widget
@@ -36,6 +37,38 @@ class BaseWidget{
     thisWidget.announce();
     thisWidget.renderValue();
   }
+
+  parseValue(value){
+    /* Zajmie się przekształcaniem wartości, którą chcemy ustawić na odpowiedni typ lub formę. W przypadku widgetu daty musi to być liczba, ale to co użytkownik wpisuje na stronie jest tekstem, dlatego użyjemy funkcji parseInt  */
+    return parseInt(value);
+    
+  }
+  
+  isValid(value){
+    /* Będzie zwracać prawdę/fałsz w zależności od tego, czy wartość, którą chcemy ustawić dla tego widgetu jest prawidłowa wg kryterium, jakie ustawimy dla tego widgetu */
+
+    return !isNaN(value); //sprawdza, czy value NIE jest NIELICZBĄ
+  }
+
+  renderValue(){
+    /* Ta metoda służy temu, aby bieżąca wartość widgetu zostałą wyświetlona na stronie (wyrenderowana) */
+    const thisWidget = this;
+
+    thisWidget.dom.wrapper.innerHTML = thisWidget.value;
+  }
+
+  announce(){
+    const thisWidget = this;
+  
+    const event = new CustomEvent('updated', {
+      bubbles: true                                                   //MENTOR!! ????????????????????????????????????????????
+      /* używamy innego rodz. eventu, którego właściwość "Bubbles" możemy kontrolować. dzięki niej event będzie działał emitowany na tym elemencie oraz na jego rodzicu, dziadku itd aż do <body>, document, window. 
+        W PRZYPADKU CUSTOM EVENTU BĄBELKOWANIE MUSIMY WŁĄCZYĆ SAMI */
+  
+    });
+    thisWidget.dom.wrapper.dispatchEvent(event);
+  }
 }
 
 export default BaseWidget;
+
