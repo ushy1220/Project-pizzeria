@@ -1,31 +1,41 @@
 import {select} from './settings.js';
 import {settings} from './settings.js';
+import BaseWidget from './baseWidget.js';
 
-class AmountWidget{
+class AmountWidget extends BaseWidget{ 
+  /* informacja ze klasa AmountWidget jest rozszerzeniem klasy BaseWidget */
+
   constructor(element){
+    super(element, settings.amountWidget.defaultValue); 
+    /* 
+    odwołanie do konstruktora klasy nadrzędnej (obowiązkowe). 
+    1(element) - wrapperElement (z konstruktora klasy BaseWidget)
+    2- adres do initialValue (początkowa wartość z kostruktora BaseWidget)
+    */
+
     const thisWidget = this;
   
     thisWidget.getElements(element);
-    thisWidget.setValue(thisWidget.input.value || settings.amountWidget.defaultValue);
     thisWidget.initActions();
       
     //console.log('amountWidget:', thisWidget);
     //console.log('constructor arguments:', element);  
   }
   
-  getElements(element){
+  getElements(){
     const thisWidget = this;
     
-    thisWidget.element = element;
-    thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
-    thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
-    thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
+    thisWidget.dom.linkDecrese = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
+    thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
   }
   
   setValue(value){
+    /* SŁUŻY DO USTAWIANIA NOWYCH WARTOŚCI WIDGETU, ALE TYLKO POD WARUNKIEM, ŻE JEST TO PRAWIDŁOWA WARTOŚĆ (LICZBA Z ZAKRESU ZDEFINIOWANEGO W NASZEJ APLIKACJI) */
+
     const thisWidget = this;
   
-    const newValue = parseInt(value);
+    const newValue = thisWidget.parseValue(value);
   
     /* TODO: Add validation */
   
@@ -36,25 +46,35 @@ class AmountWidget{
     }
   
     thisWidget.value = newValue;
-    thisWidget.input.value = thisWidget.value;
+    thisWidget.dom.input.value = thisWidget.value;
   
     thisWidget.announce();
   }
+
+  parseValue(value){
+    /* Zajmie się przekształcaniem wartości, którą chcemy ustawić na odpowiedni typ lub formę. W przypadku widgetu daty musi to być liczba, ale to co użytkownik wpisuje na stronie jest tekstem, dlatego użyjemy funkcji parseInt  */
+    return parseInt(value);
+    
+  }
   
+  isValid(value){
+    /* Będzie zwracać prawdę/fałsz w zależności od tego, czy wartość, którą chcemy ustawić dla tego widgetu jest prawidłowa wg kryterium, jakie ustawimy dla tego widgetu */
+  }
+
   initActions(){
     const thisWidget = this;
   
-    /* dla "thisWidget.input" dodany został nasłuchiwacz eventu "change", dla którego handler użyje metody "setValue" z takim samym argumentem, jak w konstruktorze (wartość inputa) */
-    thisWidget.input.addEventListener('change', function(){ 
-      thisWidget.setValue(thisWidget.input.value);
+    /* dla "thisWidget.dom.input" dodany został nasłuchiwacz eventu "change", dla którego handler użyje metody "setValue" z takim samym argumentem, jak w konstruktorze (wartość inputa) */
+    thisWidget.dom.input.addEventListener('change', function(){ 
+      thisWidget.setValue(thisWidget.dom.input.value);
     });
   
-    thisWidget.linkDecrease.addEventListener('click', function(event){
+    thisWidget.dom.linkDecrese.addEventListener('click', function(event){
       event.preventDefault;
       thisWidget.setValue(thisWidget.value - 1);
     });
   
-    thisWidget.linkIncrease.addEventListener('click', function(event){
+    thisWidget.dom.linkIncrease.addEventListener('click', function(event){
       event.preventDefault;
       thisWidget.setValue(thisWidget.value + 1);
     });
@@ -69,7 +89,7 @@ class AmountWidget{
         W PRZYPADKU CUSTOM EVENTU BĄBELKOWANIE MUSIMY WŁĄCZYĆ SAMI */
   
     });
-    thisWidget.element.dispatchEvent(event);
+    thisWidget.dom.wrapper.dispatchEvent(event);
   }
   
 }
