@@ -8,6 +8,7 @@ class Booking {
   constructor(element){
     const thisBooking = this;
 
+    thisBooking.chosenTable();
     thisBooking.render(element); // ????? element ?????
     thisBooking.initWidget();
     thisBooking.getData();
@@ -178,6 +179,7 @@ class Booking {
 
     thisBooking.dom.hoursPicker = thisBooking.dom.wrapper.querySelector(select.widgets.hourPicker.wrapper);
 
+    //dostęp do całego diva ze stolikami
     thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(select.booking.tables);
   }
 
@@ -201,10 +203,63 @@ class Booking {
     thisBooking.dom.wrapper.addEventListener('updated', function(){
       thisBooking.updateDom();
     });
+
+    // Nowy nasłuchiwacz, który przy wykryciu kliknięcia w diva ze stolikami włączy nową metodę. Np. initTables.
+    for(let table of thisBooking.dom.tables){
+      table.addEventListener('click', function(){
+        thisBooking.initTables(event);
+      });
+    }
+
   }
 
-  choosenTables(){
-    
+  initTables(event){
+    const thisBooking = this;
+
+    const chosenTable = event.target;
+
+    if(chosenTable.classList.contains(classNames.booking.tableBooked)){
+      alert('Przepraszamy! Ten stolik jest już zajęty');
+    } else {
+      if(!chosenTable.classList.contains(classNames.booking.tableSelected))
+        thisBooking.tableNumber = chosenTable.getAttribute(settings.booking.tableIdAttribute);
+      chosenTable.classList.toggle(classNames.booking.tableSelected);
+    }
+
+  }
+
+  /* funkcja, która wyśle pod odpowiedni adres na serwerze informacje o rezerwacji */
+  sendBooking(){
+    const thisBooking = this;
+
+    const url = settings.db.url + '/' + settings.db.booking;
+    const payload = {
+      date: thisBooking.datePicker.value,//data wybrana w datePickerze
+      hour: thisBooking.hourPicker.value,//godzina wybrana w hourPickerze (w formacie HH:ss)  
+      table: parseInt(thisBooking.tableNumber),//numer wybranego stolika (lub null jeśli nic nie wybrano)(liczba)
+      duration: parseInt(thisBooking.hoursAmountWidget.value),//liczba godzin wybrana przez klienta(liczba)
+      ppl: parseInt(thisBooking.peopleAmountWidget.value),//liczba osób wybrana przez klienta(liczba)
+      starter: [],
+      phone: thisBooking.dom.phone.value,//numer telefonu z formularza,
+      address: thisBooking.dom.address.value//adres z formularza
+    };
+
+    for(let starter of thisBooking.dom.starters){
+      if(starter.checked == true){
+        payload.starter.push(starter.value);
+      }
+    }
+    thisBooking.booked[thisBooking.date][thisBooking.hour].push(thisBooking.tableSelected);
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
+
+    fetch(url, options);
   }
 }
 
