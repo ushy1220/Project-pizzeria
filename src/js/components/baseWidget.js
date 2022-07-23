@@ -13,13 +13,19 @@ class BaseWidget{
     thisWidget.dom.wrapper = wrapperElement;
     /* zapisany w ... wrapper przekazany konstruktorowi w momencie tworzenia instancji */
 
-    thisWidget.value = initialValue;
+    thisWidget.correctValue = initialValue;
     /* początkowa wartość widgetu w jego właściwości Value */
   }
 
-  // METODY SKOPIOWANE Z INNYCH MODUŁÓW KTÓRE BĘDĄ DOTYCZYĆ WSZYSTKICH WIDGETÓW
+  // METODY, KTÓRE BĘDĄ DOTYCZYĆ WSZYSTKICH WIDGETÓW
 
-  setValue(value){
+  get value(){
+    const thisWidget = this;
+
+    return thisWidget.correctValue;
+  }
+
+  set Value(value){
     /* SŁUŻY DO USTAWIANIA NOWYCH WARTOŚCI WIDGETU, ALE TYLKO POD WARUNKIEM, ŻE JEST TO PRAWIDŁOWA WARTOŚĆ (LICZBA Z ZAKRESU ZDEFINIOWANEGO W NASZEJ APLIKACJI) */
 
     const thisWidget = this;
@@ -28,14 +34,20 @@ class BaseWidget{
   
     /* TODO: Add validation */
   
-    if(thisWidget.value !== newValue && thisWidget.isValid(newValue)){
-      thisWidget.value = newValue;
+    if(thisWidget.correctValue !== newValue && thisWidget.isValid(newValue)){
+      thisWidget.correctValue = newValue;
     }
   
-    thisWidget.value = newValue;
+    thisWidget.correctValue = newValue;
 
     thisWidget.announce();
     thisWidget.renderValue();
+  }
+
+  setValue(){
+    const thisWidget = this;
+
+    thisWidget.value = value;
   }
 
   parseValue(value){
