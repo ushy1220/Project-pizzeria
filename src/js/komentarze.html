@@ -1,0 +1,73 @@
+<!-- getElements przygotowuje referencje do elementów w HTML-u, 
+    initActions dodaje do nich nasłuchiwacze,  
+    update w klasie Cart aktualizuje dane w koszyku 
+
+    --------------------------------------------------------------------------
+
+                                            REACT
+
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  age: 24,
+  ...
+};
+
+const { firstName, lastName}  = person;
+
+wyciągnij jako stałe właściwości firstName i lastName z obiektu person
+
+                --------------------------------------------------------
+
+const names = ['John', 'Amanda', 'Thomas'];
+const personOne = names[0];
+const personTwo = names[1];
+
+                --- >>>
+
+const names = ['John', 'Amanda', 'Thomas'];
+const [personOne, personTwo] = names;
+
+                --------------------------------------------------------
+
+                const names = ['John', 'Amanda', 'Doe'];
+const namesCopy = [];
+for(const name of names) {
+  namesCopy.push(name);
+}   
+
+                --- >>>
+
+const names = ['John', 'Amanda', 'Doe'];
+const namesCopy = [...names];
+
+...names oznacza  “wydziel”/”wyciągnij” wszystkie elementy z obiektu
+
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  age: 24
+};
+                --- >>>
+
+const personCopy = { ...person };
+
+                --------------------------------------------------------
+const a = 'Hello';
+const b = 'World';
+const str = `This is ${a} ${b}! And this is ${a.toUpperCase()}`
+
+This is Hello World! And this is HELLO
+
+Ani razu nie musimy “wychodzić” ze stringa. Chcesz użyć jakiejś zmiennej (np. a)? A może chcesz wykonać jeszcze inny kod JS-owy, który coś zwróci (np. a.toUpperCase())? Nie ma problemu! Wystarczy wpisać w stringu znaki ${}, a między klamrami możemy korzystać z całej składni JS-a!
+
+W przypadku tego zapisu zamiast apostrofów korzysta się ze znaku "`"(nad tab). Pomiędzy tym znakiem możemy przechowywać zarówno tekst, jak i kod JS-owy.
+
+                --------------------------------------------------------
+
+
+
+
+                --------------------------------------------------------
+
+--------------------------------------------------------------------------
