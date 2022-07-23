@@ -1,7 +1,8 @@
-import {select, templates} from '../settings';
+import {classNames, select, settings, templates} from '../settings';
 import AmountWidget from './amountwidget';
 import HourPicker from './HourPicker';
 import DatePicker from './DatePicker';
+import utils from '../utils';
 
 class Booking {
   constructor(element){
@@ -9,6 +10,149 @@ class Booking {
 
     thisBooking.render(element); // ????? element ?????
     thisBooking.initWidget();
+    thisBooking.getData();
+  }
+
+  getData(){
+    const thisBooking = this;
+
+    const startDateParam = settings.db.dateStartParamKey + '=' + utils.dateToStr(thisBooking.datePicker.minDate);
+
+    const endDateParam= settings.db.dateEndParamKey + '=' + utils.dateToStr(thisBooking.datePicker.maxDate);
+
+    const params= {
+      booking: [
+        startDateParam,
+        endDateParam,
+      ],
+
+      eventsCurrent: [
+        settings.db.notRepeatParam,
+        startDateParam,
+        endDateParam,
+      ],
+
+      eventsRepeat: [
+        settings.db.repeatParam,
+        endDateParam,
+      ],
+    };
+
+    const urls = {
+      booking: settings.db.url + '/' + settings.db.booking + '?' + params.booking.join('&'), 
+      // zawiera adres endpointu API ktory zwroci liste rezerwacji
+
+      eventsCurrent: settings.db.url + '/' + settings.db.event + '?' + params.eventsCurrent.join('&'), 
+      // zwroci liste wydarzen jednorazowych
+
+      eventsRepeat: settings.db.url + '/' + settings.db.event + '?' + params.eventsRepeat.join('&'), 
+      // zwroci liste wydarzen cyklicznych
+    };
+
+    /* Promise.all wykona pewną operację (fetch), a kiedy zostanie ona zakończona, wtedy zostanie wykonana funkcja zdefiniowana w metodzie ".then" */
+    Promise.all([
+      fetch(urls.booking),
+      fetch(urls.eventsCurrent),
+      fetch(urls.eventsRepeat),
+    ])
+      .then(function(allResponses){
+        const bookingsResponses = allResponses[0];
+        const eventsCurrentResponses = allResponses[1];
+        const eventsRepeatResponses = allResponses[2];
+        return Promise.all([
+          bookingsResponses.json(),
+          eventsCurrentResponses.json(),
+          eventsRepeatResponses.json(),
+        ]);
+      })
+      .then(function([bookings, eventsRepeat, eventsCurrent]){
+        // console.log(bookings);
+        // console.log(eventsRepeat);
+        // console.log(eventsCurrent);
+        //Potraktuj pierwszy argument jako tablicę ([]), i pierwszy element z tej tablicy zapisz w zmiennej bookings
+        thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
+      });
+  }
+
+  parseData(bookings, eventsCurrent, eventsRepeat){
+    const thisBooking = this;
+
+    thisBooking.booked = {};
+
+    for(let item of eventsCurrent){
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+    }
+
+    for(let item of bookings){
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+    }
+
+    const minDate = thisBooking.datePicker.minDate;
+
+    const maxDate = thisBooking.datePicker.maxDate;
+
+    for(let item of eventsRepeat){
+      if(item.repeat == 'daily'){
+        for(let loopDate = minDate; loopDate <= maxDate; loopDate = utils.addDays(loopDate, 1)){
+          thisBooking.makeBooked(utils.dateToStr(loopDate), item.hour, item.duration, item.table);
+        }
+      }
+    }
+
+    thisBooking.updateDom();
+  }
+
+  makeBooked(date, hour, duration, table){
+    const thisBooking = this;
+
+    if(typeof thisBooking.booked[date] == 'undefined'){
+      thisBooking.booked[date] = {};
+    }
+    // konwersja godziny
+    const startHour = utils.hourToNumber(hour);
+
+    for(let hourBlock = 0; hourBlock < startHour + duration; hourBlock += 0.5){ 
+
+      if(typeof thisBooking.booked[date][hourBlock] == 'undefined'){
+        thisBooking.booked[date][hourBlock] = [];
+      } 
+
+      thisBooking.booked[date][hourBlock].push(table);
+    }
+  }
+
+  updateDom(){
+    const thisBooking = this;
+
+    thisBooking.date = thisBooking.datePicker.value;
+    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
+
+    let allAvailable = false;
+
+    if(
+      typeof thisBooking.booked[thisBooking.date] == 'undefined'
+      ||
+      typeof thisBooking.booked[thisBooking.date][thisBooking.hour] == 'undefined'
+    ){
+      allAvailable = true;
+    }
+
+    for(let table of thisBooking.dom.tables){
+      let tableId = table.getAttribute(settings.booking.tableIdAttribute);
+      if(!isNaN(tableId)){
+        tableId = parseInt(tableId);
+      }
+
+      if(
+        !allAvailable
+        &&
+        thisBooking.booked[thisBooking.date][thisBooking.hour].includes(tableId)
+      ){
+        table.classList.add(classNames.booking.tableBooked);
+      } else {
+        table.classList.remove(classNames.booking.tableBooked);
+      }
+    }
   }
 
   render(element){
@@ -33,6 +177,8 @@ class Booking {
     thisBooking.dom.datePicker = thisBooking.dom.wrapper.querySelector(select.widgets.datePicker.wrapper);
 
     thisBooking.dom.hoursPicker = thisBooking.dom.wrapper.querySelector(select.widgets.hourPicker.wrapper);
+
+    thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(select.booking.tables);
   }
 
   initWidgets(){
@@ -51,6 +197,14 @@ class Booking {
 
     thisBooking.datePicker = new DatePicker(thisBooking.dom.datePicker);
     thisBooking.dom.datePicker.addEventListener('click', function(){});
+
+    thisBooking.dom.wrapper.addEventListener('updated', function(){
+      thisBooking.updateDom();
+    });
+  }
+
+  choosenTables(){
+    
   }
 }
 
