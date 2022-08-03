@@ -1,0 +1,67 @@
+.links{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.links a{
+    flex: 0 0 100%;
+    background-color: black; 
+    height: 70px;
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.opening-hours{
+    background-color: #c0392b;
+    height: 100px;
+    width: 100%;
+    text-align: center;
+    margin: 1%;
+}
+
+.booking{
+    display: flex;
+    width: 48%;
+    margin: 1%;
+}
+
+.order{
+    display: flex;
+    width: 48%;
+    margin: 1%;    
+}
+
+h2{
+    color: white;
+}
+
+.opening-hours span{
+    color: white;
+}
+
+.jpg{
+    display: flex;
+}
+
+.carousel-caption{
+    display: flex;
+}
+
+.galery-wrapper{
+    display: block;
+    width: 100%;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.galery-wrapper img{
+    height: 33%;
+    width: 33%; 
+}
+
+.galery-wrapper img:hoover{
+    cursor: pointer;
+}

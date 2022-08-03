@@ -1,16 +1,15 @@
-import {classNames, select, settings, templates} from '../settings';
-import AmountWidget from './amountwidget';
-import HourPicker from './HourPicker';
-import DatePicker from './DatePicker';
-import utils from '../utils';
+import {classNames, select, settings, templates} from '../settings.js';
+import AmountWidget from './amountwidget.js';
+import HourPicker from './HourPicker.js';
+import DatePicker from './DatePicker.js';
+import utils from '../utils.js';
 
 class Booking {
   constructor(element){
     const thisBooking = this;
 
-    thisBooking.chosenTable();
     thisBooking.render(element); // ????? element ?????
-    thisBooking.initWidget();
+    thisBooking.initWidgets();
     thisBooking.getData();
   }
 
@@ -194,8 +193,8 @@ class Booking {
     thisBooking.dom.hoursAmount.addEventListener('click', function(){});
 
     /* uruchomienie na obu elementach odpowiednie widgety. (datePicker, hourPicker*/
-    thisBooking.hourPicker = new HourPicker(thisBooking.dom.hourPicker);
-    thisBooking.dom.hourPicker.addEventListener('input', function(){});
+    thisBooking.hourPicker = new HourPicker(thisBooking.dom.hoursPicker);
+    thisBooking.dom.hoursPicker.addEventListener('input', function(){});
 
     thisBooking.datePicker = new DatePicker(thisBooking.dom.datePicker);
     thisBooking.dom.datePicker.addEventListener('click', function(){});

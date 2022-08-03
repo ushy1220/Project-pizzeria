@@ -36,7 +36,7 @@ export const app = {
 
     /* Następnie dodajemy nasłuchiwacze do wszystkich linków, które odsyłają do podstron. Na kliknięcie w taki link uzyskujemy id z atrybutu href tego linka, po czym aktywujemy odpowiednia podstrone */
     for(let link of thisApp.navLinks){
-      link.addEventlistener('click', function(event){
+      link.addEventListener('click', function(event){
         
         //pierwszą rzeczą jaką zapisujemy wewnątrz handlera eventu jest definicja stałej w której zapiszemy obiekt this
         const clickedElement = this;
@@ -150,7 +150,7 @@ export const app = {
 
     thisApp.productList = document.querySelector(select.containerOf.menu);
 
-    thisApp.productList.addEventlistener('add-to-cart', function(event){
+    thisApp.productList.addEventListener('add-to-cart', function(event){
       app.cart.add(event.detail.product);
     });
   },

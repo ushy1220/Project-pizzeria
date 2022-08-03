@@ -1,8 +1,8 @@
-import {select} from './settings.js';
-import {classNames} from './settings.js';
-import {templates} from './settings.js';
-import {settings} from './settings.js';
-import utils from './settings.js';
+import {select} from '../settings.js';
+import {classNames} from '../settings.js';
+import {templates} from '../settings.js';
+import {settings} from '../settings.js';
+import utils from '../utils.js';
 import CartProduct from './cartProduct.js';
 
 class Cart{  //KOSZYK

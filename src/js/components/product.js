@@ -1,7 +1,6 @@
-import { select, classNames, templates } from './settings';
-import utils from './utils.js';
-import AmountWidget from './components/amountWidget.js';
-import {app} from './app.js';
+import { select, classNames, templates } from '../settings.js';
+import utils from '../utils.js';
+import AmountWidget from './amountWidget.js';
 
 class Product{
   constructor(id, data){
@@ -176,14 +175,14 @@ class Product{
   addToCart(){
     const thisProduct = this;
   
-    app.cart.add(thisProduct.prepareCartProduct());
+    // app.cart.add(thisProduct.prepareCartProduct());
     /*przekazuje ona całą instancję jako argument metody "app.cart.add". W ten sposób odwołujemy się do metody "add" klasy Cart
       Metoda "add" otrzymuje referencję do tej instancji, co pozwoli jej odczytywać jej właściwości i wykonywać jej metody*/
   
     const event = new CustomEvent('add-to-cart', {
       bubbles: true,
       detail: {
-        product: thisProduct,
+        product: thisProduct.prepareCartProduct(),
       },
     });
 

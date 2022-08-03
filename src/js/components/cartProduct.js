@@ -1,4 +1,4 @@
-import {select} from './settings.js';
+import {select} from '../settings.js';
 import AmountWidget from './amountwidget.js';
 
 class CartProduct{  //POJEDYNCZE ELEMENTY W KOSZYKU

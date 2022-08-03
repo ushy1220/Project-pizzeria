@@ -1,6 +1,7 @@
 class BaseWidget{
   /* klasa nadrzędna dla innych modułów opierających się na tej klasie ale dopisujących do niej cos tylko dla sibeie */
   constructor(wrapperElement, initialValue){
+    console.log(wrapperElement);
     /* 
     wrapperElement- element DOM w którym znajduje się ten widget
     initialValue- początkowa wartość widgetu
@@ -25,7 +26,7 @@ class BaseWidget{
     return thisWidget.correctValue;
   }
 
-  set Value(value){
+  set value(value){
     /* SŁUŻY DO USTAWIANIA NOWYCH WARTOŚCI WIDGETU, ALE TYLKO POD WARUNKIEM, ŻE JEST TO PRAWIDŁOWA WARTOŚĆ (LICZBA Z ZAKRESU ZDEFINIOWANEGO W NASZEJ APLIKACJI) */
 
     const thisWidget = this;
@@ -44,7 +45,7 @@ class BaseWidget{
     thisWidget.renderValue();
   }
 
-  setValue(){
+  setValue(value){
     const thisWidget = this;
 
     thisWidget.value = value;

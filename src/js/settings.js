@@ -25,7 +25,7 @@ export const select = {
   },
   widgets: {
     amount: {
-      input: 'input[name="amount"]',
+      input: 'input',
       linkDecrease: 'a[href="#less"]',
       linkIncrease: 'a[href="#more"]',
     },
@@ -49,7 +49,7 @@ export const select = {
     tables: '.floor-plan .table',
   },
   nav: {
-    links: '.main-nav a',
+    links: '.main-nav a, #home .links a',
   },
 
   // CODE ADDED START
@@ -113,8 +113,8 @@ export const settings = {
     orders: 'orders',
 
     // (moduł 9)
-    booking: 'booking',
-    event: 'event',
+    booking: 'bookings',
+    event: 'events',
     dateStartParamKey: 'date_gte',
     dateEndParamKey: 'date_lte',
     notRepeatParam: 'repeat=false',

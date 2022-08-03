@@ -1,5 +1,5 @@
-import {select} from './settings.js';
-import {settings} from './settings.js';
+import {select} from '../settings.js';
+import {settings} from '../settings.js';
 import BaseWidget from './baseWidget.js';
 
 class AmountWidget extends BaseWidget{ 
@@ -24,7 +24,7 @@ class AmountWidget extends BaseWidget{
   
   getElements(){
     const thisWidget = this;
-    
+
     thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
     thisWidget.dom.linkDecrese = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
