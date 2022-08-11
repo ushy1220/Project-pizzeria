@@ -73,3 +73,26 @@ Najpierw npx pobierze paczkę create-react-app, następnie uruchomi ją w sposó
                 --------------------------------------------------------
 
 --------------------------------------------------------------------------
+
+                                                            PUBLIKACJA NA SERWERZE
+
+1. POTRZEBNE SA PLIKI SERVER.JS, PROCFILE ORAZ ZMIANA W PLIKU SETTINGS.JS
+2. INSTALACJA HEROKU (w konsoli heroku -v sprawdza poprawność instalacji)
+3. konsola: heroku login (email + hasło(hasło1...!))
+4. konfiguracja adresu zdalengo repozytorium na Heroku: heroku git:remote -a nazwa aplikacji z heroku
+5. publikacja strony za pomocą komendy: git push heroku master
+6. Szybkie otwieranie strony: heroku open  
+
+W razie problemów może zdarzyć się, że domyślna konfiguracja aplikacji będzie wymagała małej korekty – uruchom wtedy komendę heroku ps:scale web=1. Jeśli strona nie zaczęła działać, wprowadź jakąś zmianę w kodzie, zapisz commit i ponownie wykonaj git push heroku master
+
+Jeśli zechcesz opublikować w przyszłości inne projekty, możesz skorzystać ze znacznie szybszego sposobu tworzenia aplikacji.
+Zamiast tworzyć aplikację za pomocą dashboardu Heroku, jak zrobiliśmy to przed chwilą, można to robić również za pomocą linii komend. W tym celu możesz użyć komendy:
+
+heroku create
+
+Opcjonalnie po spacji możesz też dodać nazwę aplikacji, którą chcesz stworzyć.
+
+heroku create app_name
+
+Ta komenda jednocześnie doda adres zdalnego repozytorium do konfiguracji Gita, dzięki czemu nie trzeba wywoływać komendy heroku git:remote -a app_name. W rezultacie, od razu po wykonaniu heroku create można uruchomić git push heroku master.
+

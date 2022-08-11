@@ -84,6 +84,19 @@ export const app = {
       );
     }
     /* Załóżmy że metoda activatePage zostałą wykonana i jako argument otrzymałą tekst "order"(pageId). W takim razie dla każdej ze stron zapisanych w thissApp.pages zostanie dodana lub usunieta klasa zapisana w classNAmes.pages.active. To czy klasa zostanie dodana lub usunieta zalezy od tego czy ID tej strony jest równe order(pageId). Dla podstrony "order" zostanie dodana klasa active, a dla każdej innej (np. booking) ten warunek bedzie falszywy wiec ta klasa zostanie odebrana. Nastepnie dla każdego linku zapisanego w thissApp.navLinks zostanie rowniez dodana/odebrana klasa zapisana w classNames.page.active. To czy zostanie zapisana czy nie zależy od tego czy atrybut href jest równy #order */
+
+    if(pageId == 'home'){
+      const elem = document.querySelector('.main-carousel');
+      new Flickity( elem, {
+        pauseAutoPlayOnHover: false,
+        prevNextButtons: false,
+        wrapAround: true,
+        autoPlay: true,
+        cellAlign: 'left',
+        contain: true,
+        setGallerySize: false
+      });
+    }
   },
   
 

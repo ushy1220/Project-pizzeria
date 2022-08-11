@@ -1,67 +1,133 @@
 .links{
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .links a{
-    flex: 0 0 100%;
-    background-color: black; 
-    height: 70px;
-    text-align: center;
-    padding: 20px;
-    margin-top: 20px;
-    color: white;
-    text-decoration: none;
+  flex: 0 0 100%;
+  background-color: black;
+  height: 70px;
+  text-align: center;
+  padding: 20px;
+  margin-top: 20px;
+  color: white;
+  text-decoration: none;
 }
 
 .opening-hours{
-    background-color: #c0392b;
-    height: 100px;
-    width: 100%;
-    text-align: center;
-    margin: 1%;
+  background-color: #c0392b;
+  height: 100px;
+  width: 100%;
+  text-align: center;
+  margin: 1%;
 }
 
 .booking{
-    display: flex;
-    width: 48%;
-    margin: 1%;
+  display: flex;
+  width: 48%;
+  margin: 1%;
 }
 
 .order{
-    display: flex;
-    width: 48%;
-    margin: 1%;    
+  display: flex;
+  width: 48%;
+  margin: 1%;    
 }
 
 h2{
-    color: white;
+  color: white;
+}
+
+.opening-hours{
+  padding-top: 10px;
 }
 
 .opening-hours span{
-    color: white;
+  color: white;
+  padding-top: 10px;
 }
 
 .jpg{
-    display: flex;
+  display: flex;
 }
 
-.carousel-caption{
-    display: flex;
+.main-carousel{
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .galery-wrapper{
-    display: block;
-    width: 100%;
-    align-items: center;
-    margin-top: 10px;
+  display: block;
+  width: 100%;
+  align-items: center;
 }
 
 .galery-wrapper img{
-    height: 33%;
-    width: 33%; 
+  height: 100%;
+  width: 100%; 
 }
 
 .galery-wrapper img:hoover{
-    cursor: pointer;
+  cursor: pointer;
+}
+
+.galery-wrapper ol{
+  list-style-type: none;
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 0;
+  margin: 0;
+}
+
+.galery-wrapper ol li{
+  flex: 0 0 33.333%;
+  position: relative;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+}
+
+.image{
+  margin: 5px;
+  padding: 0;
+}
+
+.layer {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layer i{
+  color: #c0392b;
+  align-items: center;
+  display: none;
+}
+
+.image:hover .layer i{
+  color: #c0392b;
+  align-items: center;
+  display: block;
+}
+
+.image:hover .layer{
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+footer{
+  margin-top: 25px;
+  margin-bottom: 25px; 
+}
+
+footer a:hover{
+  color: #c0392b;
 }

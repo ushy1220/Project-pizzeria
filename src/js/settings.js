@@ -108,7 +108,9 @@ export const settings = {
     defaultDeliveryFee: 20,
   },
   db: {
-    url: '//localhost:3131',
+    /* wartością url jest domena, pod którą oglądamy projekt. Tylko jeśli tą domeną będzie localhost, dodamy do adresu informację o porcie :3131.
+    Po tej zmianie aplikacja powinna dalej poprawnie działać na komputerze, ale teraz będzie też mogła być uruchomiona na Heroku. */
+    url: '//' + window.location.hostname + (window.location.hostname=='localhost' ? ':3131' : ''),
     products: 'products',
     orders: 'orders',
 
