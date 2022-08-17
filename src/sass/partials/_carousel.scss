@@ -1,19 +1,8 @@
-* { box-sizing: border-box; }
-
-body { font-family: sans-serif; }
-
-.main-carousel {
-  background: #EEE;
-  height: 200px;
+.swiper {
+  width: 600px;
+  height: 300px;
 }
 
-
-.carousel-cell {
-  width: 200px;
-  height: 200px;
-  margin-right: 10px;
-  background: #8C8;
-  border-radius: 5px;
-  counter-increment: carousel-cell;
+.swiper-item{
+  display: flex;
 }
-
