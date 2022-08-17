@@ -5,4 +5,27 @@
 
 .swiper-item{
   display: flex;
+  margin-top: 40px;
+  padding: none;
+}
+
+.swiper-item img{
+  width: 100%;
+}
+
+.jotpeg{
+  max-width: 50%;
+}
+
+.comment{
+  max-width: 50%;
+  padding-left: 10px;
+}
+
+.comment h2{
+  color: black;
+}
+
+.swiper-slide{
+  width: 100%;
 }
