@@ -56,7 +56,8 @@ class Product{
   }
   
   initAccordion(){
-    const thisProduct = this;                                                         //DLACZEGO JUŻ NIE DZIAŁA????
+    const thisProduct = this;
+    //DLACZEGO JUŻ NIE DZIAŁA????
         
     /* START: add event listener to clickable trigger on event click */
     thisProduct.accordionTrigger.addEventListener('click', function(event) {                     //DLACZEGO JUŻ NIE DZIAŁA????
